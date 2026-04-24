@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Header from "./components/Header";
 import DescriptionInput from "./components/DescriptionInput";
 import EnvironmentSelector from "./components/EnvironmentSelector";
 import OutputCard from "./components/OutputCard";
 import { detectBrowser } from "./utils/browser";
+import { generateBugReport } from "./utils/mockAi";
 import { useTheme } from "./hooks/useTheme";
 
 const initialForm = {
@@ -34,7 +35,7 @@ export default function App() {
   const [report, setReport] = useState(emptyReport);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [error, setError] = useState("");
+  const resultRef = useRef(null);
 
   useEffect(() => {
     setForm((current) => ({ ...current, browser: detectBrowser() }));
@@ -78,57 +79,48 @@ export default function App() {
       return;
     }
 
+    const description = form.description.trim();
+
+    if (!description) {
+      return;
+    }
+
     setLoading(true);
     setCopied(false);
-    setError("");
-
-    const payload = {
-      description: form.description.trim(),
-      platform: form.platform,
-      os: form.os,
-      browser: form.platform === "Web" ? form.browser : "N/A",
-    };
-
-    console.log("Generating bug report with payload:", payload);
 
     try {
-      const response = await fetch("http://localhost:4000/generate-bug", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+      const aiReport = await new Promise((resolve) => {
+        const delay = 500 + Math.floor(Math.random() * 501);
+
+        window.setTimeout(() => {
+          resolve(generateBugReport(description));
+        }, delay);
       });
-
-      const data = await response.json();
-      console.log("Generate bug response:", data);
-
-      if (!response.ok) {
-        throw new Error(data.error || data.warning || "Failed to generate bug report.");
-      }
 
       setReport({
-        title: data.title ?? "---",
+        title: aiReport.title,
         environment: {
           platform: form.platform,
-          browser: payload.browser,
+          browser: form.platform === "Web" ? form.browser : "N/A",
           os: form.os,
         },
-        preconditions: data.preconditions
-          ? String(data.preconditions)
-              .split(/\r?\n|,\s*/)
-              .map((item) => item.trim())
-              .filter(Boolean)
-          : ["---"],
-        steps: Array.isArray(data.steps) ? data.steps : [],
-        expected: data.expected ?? "---",
-        actual: data.actual ?? "---",
-        severity: data.severity ?? "",
-        priority: data.priority ?? "",
+        preconditions:
+          form.platform === "Web"
+            ? ["User is on the relevant web page", "User has access to the target flow"]
+            : ["User is on the relevant mobile screen", "User has access to the target flow"],
+        steps: aiReport.steps,
+        expected: aiReport.expected,
+        actual: aiReport.actual,
+        severity: aiReport.severity,
+        priority: aiReport.priority,
       });
-    } catch (err) {
-      console.error("Generate bug request failed:", err);
-      setError(err.message || "Failed to generate bug report.");
+
+      window.requestAnimationFrame(() => {
+        resultRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
     } finally {
       setLoading(false);
     }
@@ -200,12 +192,14 @@ export default function App() {
             </div>
           </section>
 
-          <OutputCard
-            report={report}
-            onCopy={handleCopy}
-            copied={copied}
-            canCopy={report.title !== "---"}
-          />
+          <div ref={resultRef}>
+            <OutputCard
+              report={report}
+              onCopy={handleCopy}
+              copied={copied}
+              canCopy={report.title !== "---"}
+            />
+          </div>
         </main>
       </div>
     </div>
