@@ -1,0 +1,61 @@
+# AI Bug Report Assistant
+
+## Overview
+
+AI-powered tool that converts raw issue descriptions into structured, professional bug reports.
+
+---
+
+## Features
+
+* Generate bug reports instantly from simple descriptions
+* Structured output (Title, Steps, Expected, Actual, Severity, Priority)
+* Environment selection (Platform, OS, Browser)
+* Smart validation to prevent invalid inputs
+* Copy-ready format for Jira / Azure DevOps
+
+---
+
+## Tech Stack
+
+* Frontend: React + Vite + Tailwind
+* Backend: Node.js + Express
+* AI: Mock AI / OpenAI (optional)
+
+---
+
+## How to Run
+
+### Frontend
+
+```bash
+npm install
+npm run dev
+```
+
+### Backend
+
+```bash
+cd backend
+npm install
+node server.js
+```
+
+---
+
+## Example
+
+Input:
+"Login button not working after clicking"
+
+Output:
+
+* Title: Login functionality not working
+* Steps: Navigate → Enter data → Click → Observe
+* Severity: High
+
+---
+
+## Yousef Elkhmesy
+
+Built by a QA Engineer to improve bug reporting workflows using AI.
