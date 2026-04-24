@@ -6,13 +6,34 @@ AI-powered tool that converts raw issue descriptions into structured, profession
 
 ---
 
+## Problem
+
+Writing bug reports manually is repetitive and time-consuming, and testers may miss important details under pressure.
+
+---
+
+## Solution
+
+This tool allows QA engineers to:
+
+* Enter a simple issue description
+* Generate a complete, structured bug report instantly
+
+---
+
 ## Features
 
-* Generate bug reports instantly from simple descriptions
-* Structured output (Title, Steps, Expected, Actual, Severity, Priority)
+* Generate bug reports from plain text
+* Structured output:
+
+  * Title
+  * Steps to Reproduce
+  * Expected Result
+  * Actual Result
+  * Severity & Priority
 * Environment selection (Platform, OS, Browser)
-* Smart validation to prevent invalid inputs
-* Copy-ready format for Jira / Azure DevOps
+* Input validation to prevent empty or weak reports
+* Copy-ready output for Jira / Azure DevOps
 
 ---
 
@@ -20,7 +41,7 @@ AI-powered tool that converts raw issue descriptions into structured, profession
 
 * Frontend: React + Vite + Tailwind
 * Backend: Node.js + Express
-* AI: Mock AI / OpenAI (optional)
+* AI: Mock AI (ready for OpenAI integration)
 
 ---
 
@@ -28,18 +49,14 @@ AI-powered tool that converts raw issue descriptions into structured, profession
 
 ### Frontend
 
-```bash
 npm install
 npm run dev
-```
 
 ### Backend
 
-```bash
 cd backend
 npm install
 node server.js
-```
 
 ---
 
@@ -51,11 +68,11 @@ Input:
 Output:
 
 * Title: Login functionality not working
-* Steps: Navigate → Enter data → Click → Observe
+* Steps: Navigate → Enter credentials → Click login → Observe result
 * Severity: High
 
 ---
 
-## Yousef Elkhmesy
+## Author
 
-Built by a QA Engineer to improve bug reporting workflows using AI.
+Built by a QA Engineer to improve bug reporting workflows using modern AI concepts.
