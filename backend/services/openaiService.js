@@ -8,7 +8,10 @@ const responseSchema = {
   additionalProperties: false,
   properties: {
     title: { type: "string" },
-    preconditions: { type: "string" },
+    preconditions: {
+      type: "array",
+      items: { type: "string" },
+    },
     steps: {
       type: "array",
       items: { type: "string" },
@@ -35,6 +38,9 @@ const responseSchema = {
   ],
 };
 
+const allowedSeverity = new Set(["Critical", "High", "Medium", "Low"]);
+const allowedPriority = new Set(["High", "Medium", "Low"]);
+
 const systemPrompt = `
 You are a professional QA engineer.
 Generate a structured bug report from the provided issue details.
@@ -44,7 +50,7 @@ Rules:
 - Use clean, concise, professional QA language.
 - Infer missing reproduction steps logically when needed.
 - Preserve the user's actual issue in the actual field.
-- Preconditions must be a single string.
+- Preconditions must be an array of strings.
 - Steps must be an array of strings.
 
 Severity rules:
@@ -101,12 +107,14 @@ function parseBugReport(payload) {
   if (
     !parsed ||
     typeof parsed.title !== "string" ||
-    typeof parsed.preconditions !== "string" ||
+    !Array.isArray(parsed.preconditions) ||
     !Array.isArray(parsed.steps) ||
     typeof parsed.expected !== "string" ||
     typeof parsed.actual !== "string" ||
     typeof parsed.severity !== "string" ||
-    typeof parsed.priority !== "string"
+    typeof parsed.priority !== "string" ||
+    !allowedSeverity.has(parsed.severity) ||
+    !allowedPriority.has(parsed.priority)
   ) {
     const error = new Error("OpenAI response did not match the required schema.");
     error.statusCode = 502;

@@ -38,9 +38,9 @@ export function validateBugRequest(payload) {
     };
   }
 
-  if (!browser) {
+  if (platform === "Web" && !browser) {
     return {
-      error: "Browser is required.",
+      error: "Browser is required for Web reports.",
       statusCode: 400,
     };
   }
